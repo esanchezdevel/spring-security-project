@@ -86,8 +86,29 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 		 * If we want to permit access to all the resources to all requests, we 
 		 * must use permitAll() method instead
 		 */
-		http.httpBasic();
-		http.authorizeRequests().anyRequest().authenticated();
+		//http.httpBasic();
+		
+		/*
+		 * In this case we use a form base authentication. We will see an authentication
+		 * form in the browser for enter our user credentials and access to our endpoints
+		 */
+		http.formLogin();
+		
+		/*
+		 * authorize any request
+		 */
+		//http.authorizeRequests().anyRequest().authenticated();
+		
+		/*
+		 * authorize only endpoint /hello
+		 */
+		//http.authorizeRequests().antMatchers("/hello").authenticated();
+		
+		/*
+		 * adding the anyRequest().denyAll() we make that only authenticated users can access to hello
+		 * and the other endpoints are not accesible for any user
+		 */
+		http.authorizeRequests().antMatchers("/hello").authenticated().anyRequest().denyAll();
 	}
 
 	/*
