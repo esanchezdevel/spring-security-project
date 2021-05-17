@@ -11,8 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import esanchez.devel.app.security.MyAuthenticationProvider;
+import esanchez.devel.app.security.MySecurityFilter;
 
 /**
  * 
@@ -86,13 +88,13 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 		 * If we want to permit access to all the resources to all requests, we 
 		 * must use permitAll() method instead
 		 */
-		//http.httpBasic();
+		http.httpBasic();
 		
 		/*
 		 * In this case we use a form base authentication. We will see an authentication
 		 * form in the browser for enter our user credentials and access to our endpoints
 		 */
-		http.formLogin();
+		//http.formLogin();
 		
 		/*
 		 * authorize any request
@@ -102,13 +104,18 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 		/*
 		 * authorize only endpoint /hello
 		 */
-		//http.authorizeRequests().antMatchers("/hello").authenticated();
+		http.authorizeRequests().antMatchers("/hello").authenticated();
 		
 		/*
 		 * adding the anyRequest().denyAll() we make that only authenticated users can access to hello
 		 * and the other endpoints are not accesible for any user
 		 */
-		http.authorizeRequests().antMatchers("/hello").authenticated().anyRequest().denyAll();
+		//http.authorizeRequests().antMatchers("/hello").authenticated().anyRequest().denyAll();
+		
+		/*
+		 * configure new filter to be executed before the basicAuthenticationFilter.
+		 */
+		http.addFilterBefore(new MySecurityFilter(), BasicAuthenticationFilter.class);
 	}
 
 	/*
