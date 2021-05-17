@@ -1,5 +1,7 @@
 package esanchez.devel.app.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,11 +9,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 
+	/*
+	 * Pre-charge the passwordEncoder using the Bean that we have defined
+	 * at the bottom of the class
+	 */
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	/*
 	 * This configure method allow as to configure the Authentication Manager.
 	 */
@@ -21,13 +31,6 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 		/*
 		 * In this case we will use an authentication with registered in memory
 		 */
-		
-		/*
-		 * create a passwordEncoder for encrypt the password stored in memory and pass 
-		 * it as the encoder to the userDetailsService
-		 */
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
 		InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
 		
 		/*
@@ -60,5 +63,12 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().anyRequest().authenticated();
 	}
 
-	
+	/*
+	 * Create a Bean with the passwordEncoder for be used and have it 
+	 * pre-charged with the @Autowired
+	 */
+	@Bean
+	public BCryptPasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }
