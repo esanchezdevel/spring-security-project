@@ -12,6 +12,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import esanchez.devel.app.security.MyAuthenticationProvider;
+
+/**
+ * 
+ * @author Enrique Sanchez Jordan
+ * 
+ * This Custom Security configuration class is where we can 
+ * configure how to authenticate and authorize to the users
+ * for access to our app.
+ *
+ */
 @Configuration
 public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -22,28 +33,44 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private MyAuthenticationProvider authenticationProvider;
+	
 	/*
 	 * This configure method allow as to configure the Authentication Manager.
+	 * 
+	 * Configuration for use our custom Authentication Provider "MyAuthenticationProvider"
 	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-		/*
-		 * In this case we will use an authentication with registered in memory
-		 */
-		InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
-		
-		/*
-		 * create the user in memory
-		 */
-		UserDetails user = User.withUsername("tom").password(passwordEncoder.encode("qwertyui")).authorities("read").build();
-		userDetailsService.createUser(user);
-		
-		/*
-		 * define the authentication user details service with the encoder
-		 */
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+		auth.authenticationProvider(authenticationProvider);
 	}
+	
+//	/*
+//	 * This configure method allow as to configure the Authentication Manager.
+//	 * 
+//	 * Configuration for use UsersDetails in Memory with a custom PasswordEncoder
+//	 */
+//	@Override
+//	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//
+//		/*
+//		 * In this case we will use an authentication with registered in memory
+//		 */
+//		InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
+//		
+//		/*
+//		 * create the user in memory
+//		 */
+//		UserDetails user = User.withUsername("tom").password(passwordEncoder.encode("qwertyui")).authorities("read").build();
+//		userDetailsService.createUser(user);
+//		
+//		/*
+//		 * define the authentication user details service with the encoder
+//		 */
+//		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+//	}
 
 	/*
 	 * This configure method allow us to set which kind of authentication we 
